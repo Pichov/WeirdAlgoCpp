@@ -1,0 +1,91 @@
+/*
+* Даден е целочислен масив с 14 елемента
+* Ако последният елемент на масива е четно число, игнорирайте елементите на четни индекси; в противен случай - игнорирайте нечетните индекси
+* Подредете оставащите елементи по големина, в низходящ ред
+* Сумирайте огледалните елементи (първия с последния, втория с предпоследния,...) и изведете на екрана, във възходящ ред, тези суми, които са по-големи от средния елемент
+* ако няма такива суми, изведете информативно съобщение
+пример:
+- първоначалният масив е 10 0 12 85 -5 8 3 -9 12 -78 6 65 9 3
+- последният елемент е 3 (нечетно число) - следователно запазваме елементите на четни индекси: 10 12 -5 3 12 6 9
+- подреждаме ги по големина, низходящо: 12 12 10 9 6 3 -5
+- сумираме огледалните елементи: 12 + (-5) , 12 + 3 , 10 + 6
+- на екрана се извеждат във възходящ ред тези суми, които са по-големи от средния елемент (9) : 15 16
+*/
+
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+int numbers[14] = {321, 123, 11, 54, 231, 76, 1, 0, 69, 520, 44, 11, 16, 216};
+int oddNumbers[7], evenNumbers[7], bigger[3];
+int counter = 0, lenMagicalArray, lenBigger, sum, mirroredNum, smallerCounter;
+
+void Magic(int MagicalArray[], int size)
+{
+    lenMagicalArray = size; // Use the provided size parameter
+    sort(MagicalArray, MagicalArray + lenMagicalArray, greater<int>());
+
+    int middleElement = MagicalArray[lenMagicalArray / 2];
+
+    for (int i = 0; i < lenMagicalArray / 2; i++) //Намираме сумата на огледалните числа
+    {
+        sum = 0;
+        mirroredNum = MagicalArray[lenMagicalArray - (i + 1)];
+        sum = MagicalArray[i] + mirroredNum;
+
+        if (sum > middleElement) //Запазва всяка сума в масив
+        {
+            bigger[i - smallerCounter] = sum;
+        }
+        else
+        {
+            smallerCounter = smallerCounter + 1;
+        }
+    }
+
+    if (smallerCounter >= lenMagicalArray) //Ако нито една от сумите не е по-голяма от средния номер, изваждаме съобщение за това
+    {
+        cout << "There is no sum that is bigger than the middle element " << middleElement << endl;
+    }
+    else //Ако някоя от сумите е по-голяма от средния номер, я изкарваме възходящо.
+    {
+        lenBigger = sizeof(bigger) / sizeof(bigger[0]);
+
+        sort(bigger, bigger + lenBigger);
+
+        for (int i = 0; i < lenBigger; i++)
+        {
+            cout << "The sum " << bigger[i] << " is bigger than the middle element " << middleElement << endl;
+        }
+    }
+}
+
+int main()
+{
+    smallerCounter = 0;
+    for (int i = 0; i < 14; i++)
+    {
+        if (i % 2 == 0) //Запазваме елементите на четен индекс в масив
+        {
+            evenNumbers[i / 2] = numbers[i];
+        }
+        else //Запазваме елементите на НЕчетен индекс в масив
+        {
+            counter = counter + 1;
+            oddNumbers[i - counter] = numbers[i];
+        }
+    }
+
+    if(numbers[13] % 2 == 0)    //Ако последното число е четно, подреждаме елементите на НЕчетни индекси, сумираме огледалните елементи и ако сумата е по-голяма от средното число, я вадим на екрана низходящо
+    {
+        Magic(oddNumbers, sizeof(oddNumbers) / sizeof(oddNumbers[0]));
+
+    } else      ////Ако последното число е НЕчетно, подреждаме елементите на четни индекси, сумираме огледалните елементи и ако сумата е по-голяма от средното число, я вадим на екрана низходящо
+    {
+        Magic(evenNumbers, sizeof(evenNumbers) / sizeof(evenNumbers[0]));
+    }
+
+
+    return 0;
+}
